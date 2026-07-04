@@ -1,7 +1,7 @@
 import Foundation
 
 struct WikilinkProcessor {
-    static func resolveWikilinks(in body: String, articles: [WikiArticle]) -> String {
+    static func resolveWikilinks(in body: String) -> String {
         var result = ""
         var i = body.startIndex
         while i < body.endIndex {

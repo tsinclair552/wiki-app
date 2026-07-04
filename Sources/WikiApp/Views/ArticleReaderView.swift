@@ -3,7 +3,7 @@ import MarkdownUI
 
 struct ArticleReaderView: View {
     let article: WikiArticle
-    let allArticles: [WikiArticle]
+    let onNavigateSlug: (String) -> Void
 
     @State private var processedBody: String = ""
 
@@ -19,12 +19,11 @@ struct ArticleReaderView: View {
         }
         .navigationTitle(article.title)
         .onAppear {
-            processedBody = WikilinkProcessor.resolveWikilinks(
-                in: article.body, articles: allArticles
-            )
+            processedBody = WikilinkProcessor.resolveWikilinks(in: article.body)
         }
         .environment(\.openURL, OpenURLAction { url in
-            if url.scheme == "wikilink" {
+            if url.scheme == "wikilink", let slug = url.host {
+                onNavigateSlug(slug)
                 return .handled
             }
             return .systemAction

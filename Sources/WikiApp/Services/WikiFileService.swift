@@ -35,13 +35,6 @@ struct WikiFileService {
         return result.metadata
     }
 
-    func readWikiIndex(at url: URL) -> [String: Any]? {
-        let indexURL = url.appendingPathComponent("wiki").appendingPathComponent("_index.md")
-        guard let content = readString(from: indexURL),
-              let result = FrontmatterParser.parse(content) else { return nil }
-        return result.metadata
-    }
-
     func discoverArticleURLs(in topicURL: URL) -> [URL] {
         let wikiDir = topicURL.appendingPathComponent("wiki")
         let categories = ["concepts", "topics", "references", "theses"]

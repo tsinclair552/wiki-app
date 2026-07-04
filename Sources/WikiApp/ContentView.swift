@@ -20,14 +20,26 @@ struct ContentView: View {
                 )
             }
         } detail: {
-            if let article = selectedArticle, let topic = selectedTopic {
-                ArticleReaderView(article: article, allArticles: topic.articles)
+            if let article = selectedArticle {
+                ArticleReaderView(article: article) { slug in
+                    if let target = selectedTopic?.article(for: slug) {
+                        selectedArticle = target
+                    }
+                }
             } else {
                 ContentUnavailableView(
                     "Select an Article",
                     systemImage: "doc.text",
                     description: Text("Choose an article to read")
                 )
+            }
+        }
+        .toolbar {
+            ToolbarItem {
+                Button("Refresh", systemImage: "arrow.clockwise") {
+                    hub.refresh(at: settings.wikiPath)
+                }
+                .keyboardShortcut("r", modifiers: .command)
             }
         }
         .onAppear { hub.refresh(at: settings.wikiPath) }

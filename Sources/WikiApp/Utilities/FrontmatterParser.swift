@@ -18,7 +18,7 @@ struct FrontmatterParser {
         let yamlBlock = String(withoutFirst[..<endRange.lowerBound])
         let bodyStart = withoutFirst[endRange.upperBound...]
             .drop(while: { $0 == "\n" || $0 == "\r" })
-        let body = String(bodyStart)
+        let body = String(bodyStart).trimmingCharacters(in: .whitespacesAndNewlines)
 
         guard let yaml = try? Yams.load(yaml: yamlBlock) as? [String: Any] else {
             return nil
