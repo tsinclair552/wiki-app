@@ -19,16 +19,3 @@ struct WikiApp: App {
         }
     }
 }
-
-@Observable
-final class WikiSettings {
-    var wikiPath: String {
-        didSet { UserDefaults.standard.set(wikiPath, forKey: "wikiPath") }
-    }
-
-    init() {
-        self.wikiPath = UserDefaults.standard.string(forKey: "wikiPath")
-            ?? FileManager.default.homeDirectoryForCurrentUser
-                .appendingPathComponent("wiki").path
-    }
-}
