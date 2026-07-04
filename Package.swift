@@ -2,7 +2,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "WikiApp",
+    name: "LocalWikiReader",
     defaultLocalization: "en",
     platforms: [.macOS(.v14)],
     dependencies: [
@@ -11,7 +11,7 @@ let package = Package(
     ],
     targets: [
         .executableTarget(
-            name: "WikiApp",
+            name: "LocalWikiReader",
             dependencies: [
                 .product(name: "MarkdownUI", package: "swift-markdown-ui"),
                 .product(name: "Yams", package: "Yams"),

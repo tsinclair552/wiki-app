@@ -1,10 +1,11 @@
 #!/bin/bash
-# Package WikiApp as a macOS .app bundle with icon
+# Package LocalWikiReader as a macOS .app bundle with icon
 
 set -euo pipefail
 
 PROJECT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
-APP_NAME="WikiReader"
+APP_NAME="LocalWiki Reader"
+EXEC_NAME="LocalWikiReader"
 BUILD_DIR="$PROJECT_DIR/.build"
 
 # Build
@@ -12,7 +13,7 @@ echo "→ Building..."
 cd "$PROJECT_DIR"
 swift build -c release
 
-BINARY="$BUILD_DIR/release/WikiApp"
+BINARY="$BUILD_DIR/release/LocalWikiReader"
 APP_BUNDLE="$PROJECT_DIR/build/$APP_NAME.app"
 APP_DIR="$APP_BUNDLE/Contents"
 MACOS_DIR="$APP_DIR/MacOS"
@@ -24,7 +25,7 @@ rm -rf "$APP_BUNDLE"
 mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
 
 # Copy binary
-cp "$BINARY" "$MACOS_DIR/$APP_NAME"
+cp "$BINARY" "$MACOS_DIR/$EXEC_NAME"
 
 # Generate icon
 echo "→ Generating icon (1024×1024)..."
@@ -59,15 +60,15 @@ cat > "$APP_DIR/Info.plist" << PLIST
     <key>CFBundleDevelopmentRegion</key>
     <string>en</string>
     <key>CFBundleExecutable</key>
-    <string>$APP_NAME</string>
+    <string>$EXEC_NAME</string>
     <key>CFBundleIconFile</key>
     <string>AppIcon</string>
     <key>CFBundleIdentifier</key>
-    <string>com.tsinclair.wikireader</string>
+    <string>com.tsinclair.localwiki-reader</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>WikiReader</string>
+    <string>$APP_NAME</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleShortVersionString</key>

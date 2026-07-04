@@ -1,7 +1,7 @@
 import SwiftUI
 
 @main
-struct WikiApp: App {
+struct LocalWikiReader: App {
     @State private var settings = WikiSettings()
 
     var body: some Scene {
@@ -14,7 +14,7 @@ struct WikiApp: App {
         .commands {
             SidebarCommands()
             CommandGroup(replacing: .help) {
-                Link("Wiki Reader Help", destination: URL(string: "https://github.com/tsinclair/wiki-app")!)
+                Link("LocalWiki Reader Help", destination: URL(string: "https://github.com/tsinclair/wiki-app")!)
             }
         }
 
