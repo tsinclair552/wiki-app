@@ -2,12 +2,13 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(WikiSettings.self) private var settings
+    @Environment(\.colorScheme) private var scheme
 
     var body: some View {
         Form {
-            HStack {
+            HStack(spacing: AD.S.sm) {
                 TextField("Wiki Path", text: Bindable(settings).wikiPath)
-                    .font(.body)
+                    .font(AD.body)
                 Button("Browse…") {
                     let panel = NSOpenPanel()
                     panel.canChooseFiles = false
@@ -22,10 +23,10 @@ struct SettingsView: View {
             }
 
             Text("Path to your wiki hub (default: ~/wiki)")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+                .font(AD.caption)
+                .foregroundStyle(AD.inkMuted48(scheme))
         }
-        .padding(20)
-        .frame(width: 400)
+        .padding(AD.S.lg)
+        .frame(width: 440)
     }
 }
