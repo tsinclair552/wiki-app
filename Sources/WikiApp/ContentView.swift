@@ -3,12 +3,20 @@ import SwiftUI
 struct ContentView: View {
     @Environment(WikiSettings.self) private var settings
     @State private var hub = WikiHub()
-    @State private var selectedTopic: TopicWiki?
-    @State private var selectedArticle: WikiArticle?
+    @State private var selectedTopicID: TopicWiki.ID?
+    @State private var selectedArticleID: WikiArticle.ID?
+
+    private var selectedTopic: TopicWiki? {
+        hub.topics.first { $0.id == selectedTopicID }
+    }
+
+    private var selectedArticle: WikiArticle? {
+        selectedTopic?.articles.first { $0.id == selectedArticleID }
+    }
 
     var body: some View {
         NavigationSplitView {
-            List(selection: $selectedTopic) {
+            List(selection: $selectedTopicID) {
                 ForEach(hub.topics) { topic in
                     VStack(alignment: .leading, spacing: 4) {
                         Text(topic.title)
@@ -18,14 +26,14 @@ struct ContentView: View {
                             .foregroundStyle(.secondary)
                     }
                     .padding(.vertical, 4)
-                    .tag(topic as TopicWiki?)
+                    .tag(topic.id as TopicWiki.ID?)
                 }
             }
             .listStyle(.sidebar)
             .navigationTitle("Topics")
         } content: {
             if let topic = selectedTopic {
-                List(selection: $selectedArticle) {
+                List(selection: $selectedArticleID) {
                     ForEach(topic.articlesByCategory, id: \.0) { category, articles in
                         Section(category) {
                             ForEach(articles) { article in
@@ -39,7 +47,7 @@ struct ContentView: View {
                                             .lineLimit(2)
                                     }
                                 }
-                                .tag(article as WikiArticle?)
+                                .tag(article.id as WikiArticle.ID?)
                             }
                         }
                     }
@@ -56,7 +64,7 @@ struct ContentView: View {
             if let article = selectedArticle {
                 ArticleReaderView(article: article) { slug in
                     if let target = selectedTopic?.article(for: slug) {
-                        selectedArticle = target
+                        selectedArticleID = target.id
                     }
                 }
             } else {
@@ -71,6 +79,8 @@ struct ContentView: View {
             ToolbarItem {
                 Button("Refresh", systemImage: "arrow.clockwise") {
                     hub.refresh(at: settings.wikiPath)
+                    selectedTopicID = nil
+                    selectedArticleID = nil
                 }
                 .keyboardShortcut("r", modifiers: .command)
             }
@@ -79,6 +89,6 @@ struct ContentView: View {
         .onChange(of: settings.wikiPath) { _, newPath in
             hub.refresh(at: newPath)
         }
-        .onChange(of: selectedTopic) { _, _ in selectedArticle = nil }
+        .onChange(of: selectedTopicID) { _, _ in selectedArticleID = nil }
     }
 }
