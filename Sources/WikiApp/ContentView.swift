@@ -8,10 +8,43 @@ struct ContentView: View {
 
     var body: some View {
         NavigationSplitView {
-            TopicListView(topics: hub.topics, selection: $selectedTopic)
+            List(selection: $selectedTopic) {
+                ForEach(hub.topics) { topic in
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(topic.title)
+                            .font(.headline)
+                        Text("\(topic.articles.count) articles")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 4)
+                    .tag(topic as TopicWiki?)
+                }
+            }
+            .listStyle(.sidebar)
+            .navigationTitle("Topics")
         } content: {
             if let topic = selectedTopic {
-                ArticleListView(topic: topic, selection: $selectedArticle)
+                List(selection: $selectedArticle) {
+                    ForEach(topic.articlesByCategory, id: \.0) { category, articles in
+                        Section(category) {
+                            ForEach(articles) { article in
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(article.title)
+                                        .font(.body)
+                                    if !article.summary.isEmpty {
+                                        Text(article.summary)
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                            .lineLimit(2)
+                                    }
+                                }
+                                .tag(article as WikiArticle?)
+                            }
+                        }
+                    }
+                }
+                .navigationTitle(topic.title)
             } else {
                 ContentUnavailableView(
                     "Select a Topic",
