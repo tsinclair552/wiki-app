@@ -1,7 +1,9 @@
 import Foundation
 
 @Observable
-final class WikiArticle: Identifiable {
+final class WikiArticle: Identifiable, Hashable {
+    static func == (lhs: WikiArticle, rhs: WikiArticle) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
     let path: String
     let title: String
     let category: String
