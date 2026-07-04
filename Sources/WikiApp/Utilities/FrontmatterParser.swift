@@ -8,18 +8,17 @@ struct FrontmatterParser {
     }
 
     static func parse(_ content: String) -> Result? {
-        let lines = content
-        guard lines.hasPrefix("---") else { return nil }
+        guard content.hasPrefix("---") else { return nil }
 
-        let withoutFirst = lines.dropFirst(3)
-        guard let endRange = withoutFirst.range(of: "\n---") ?? withoutFirst.range(of: "\n---\n") else {
+        let withoutFirst = content.dropFirst(3)
+        guard let endRange = withoutFirst.range(of: "\n---\n") ?? withoutFirst.range(of: "\n---") else {
             return nil
         }
 
         let yamlBlock = String(withoutFirst[..<endRange.lowerBound])
         let bodyStart = withoutFirst[endRange.upperBound...]
             .drop(while: { $0 == "\n" || $0 == "\r" })
-        let body = String(bodyStart).trimmingCharacters(in: .whitespacesAndNewlines)
+        let body = String(bodyStart)
 
         guard let yaml = try? Yams.load(yaml: yamlBlock) as? [String: Any] else {
             return nil
