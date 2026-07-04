@@ -16,6 +16,7 @@ struct TopicListView: View {
             .padding(.vertical, 4)
             .tag(topic as TopicWiki?)
         }
+        .listStyle(.sidebar)
         .navigationTitle("Topics")
     }
 }
