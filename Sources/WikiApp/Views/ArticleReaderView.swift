@@ -6,16 +6,31 @@ struct ArticleReaderView: View {
     let onNavigateSlug: (String) -> Void
 
     @State private var processedBody: String = ""
+    @State private var showMetadata = true
+    @AppStorage("readerTextSize") private var textSize: Double = 14
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                metadataHeader
-                Divider()
+            VStack(alignment: .leading, spacing: 0) {
+                if showMetadata {
+                    metadataHeader
+                        .padding(.horizontal)
+                        .padding(.top, 24)
+                        .padding(.bottom, 16)
+
+                    Divider()
+                        .padding(.horizontal)
+                }
+
                 Markdown(processedBody)
                     .textSelection(.enabled)
+                    .markdownTheme(MarkdownUI.Theme.gitHub)
+                    .padding(.horizontal)
+                    .padding(.top, showMetadata ? 16 : 24)
+                    .padding(.bottom, 40)
             }
-            .padding(24)
+            .frame(maxWidth: 680, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: .center)
         }
         .navigationTitle(article.title)
         .onAppear {
@@ -28,16 +43,35 @@ struct ArticleReaderView: View {
             }
             return .systemAction
         })
+        .toolbar(id: "reader") {
+            ToolbarItem(id: "metadata-toggle") {
+                Button(showMetadata ? "Hide Info" : "Show Info", systemImage: showMetadata ? "info.circle.fill" : "info.circle") {
+                    withAnimation(.easeInOut(duration: 0.15)) {
+                        showMetadata.toggle()
+                    }
+                }
+            }
+            ToolbarItem(id: "text-smaller") {
+                Button("Smaller", systemImage: "textformat.size.smaller") {
+                    textSize = max(11, textSize - 1)
+                }
+            }
+            ToolbarItem(id: "text-larger") {
+                Button("Larger", systemImage: "textformat.size.larger") {
+                    textSize = min(20, textSize + 1)
+                }
+            }
+        }
     }
 
     @ViewBuilder
     private var metadataHeader: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text(article.title)
-                .font(.largeTitle)
-                .bold()
+                .font(.system(size: textSize + 10, weight: .bold, design: .serif))
+                .textSelection(.enabled)
 
-            HStack(spacing: 8) {
+            HStack(spacing: 12) {
                 confidenceBadge
                 if !article.updated.isEmpty {
                     Label(article.updated, systemImage: "calendar")
@@ -45,7 +79,7 @@ struct ArticleReaderView: View {
                         .foregroundStyle(.secondary)
                 }
                 if !article.sources.isEmpty {
-                    Label("\(article.sources.count) sources", systemImage: "doc.text")
+                    Label("\(article.sources.count) source\(article.sources.count == 1 ? "" : "s")", systemImage: "doc.text")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                 }
@@ -55,7 +89,8 @@ struct ArticleReaderView: View {
                 HStack(spacing: 4) {
                     ForEach(article.tags, id: \.self) { tag in
                         Text(tag)
-                            .font(.caption)
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
                             .padding(.horizontal, 6)
                             .padding(.vertical, 2)
                             .background(.quaternary, in: Capsule())
@@ -67,6 +102,7 @@ struct ArticleReaderView: View {
                 Text(article.summary)
                     .font(.body)
                     .foregroundStyle(.secondary)
+                    .padding(.top, 4)
             }
         }
     }
@@ -83,3 +119,4 @@ struct ArticleReaderView: View {
             .foregroundStyle(color)
     }
 }
+

@@ -8,10 +8,15 @@ struct WikiApp: App {
         WindowGroup {
             ContentView()
                 .environment(settings)
-                .frame(minWidth: 900, minHeight: 500)
+                .frame(minWidth: 720, minHeight: 400)
         }
-        .windowStyle(.titleBar)
         .windowResizability(.contentMinSize)
+        .commands {
+            SidebarCommands()
+            CommandGroup(replacing: .help) {
+                Link("Wiki Reader Help", destination: URL(string: "https://github.com/tsinclair/wiki-app")!)
+            }
+        }
 
         Settings {
             SettingsView()
